@@ -19,7 +19,7 @@ namespace MauserC96
             DebugLogConsole.AddCommandInstance("m96s",
                 "Spawn A Pistol", "SpawnPistol",
                 this);
-            
+
             DebugLogConsole.AddCommandInstance("m96b",
                 "Spawn A Pistol", "SpawnBullet",
                 this);
@@ -59,6 +59,22 @@ namespace MauserC96
                 item.rb.isKinematic = true;
 
                 _pistolItem = item;
+            });
+        }
+
+        public void SpawnBullet()
+        {
+            Catalog.GetData<ItemData>("AOTBullet").SpawnAsync(item =>
+            {
+                item.transform.position = Player.local.transform.position + 3f * Player.local.transform.forward +
+                                          2 * Player.characterData.height * Vector3.up;
+
+                item.transform.rotation = Player.local.creature.transform.rotation;
+
+                item.rb.isKinematic = true;
+                item.disallowDespawn = true;
+
+                _pistolBullet = item;
             });
         }
 
@@ -108,7 +124,7 @@ namespace MauserC96
                 }));
         }
 
-        public void TestDecal()
+        public void TestDecal(float intensity)
         {
             // GameManager.local.StartCoroutine(Catalog.GetData<CreatureData>("HumanFemale").SpawnCoroutine(
             //     Player.local.transform.position + Player.local.transform.forward, Player.local.transform.rotation, null,
@@ -126,20 +142,18 @@ namespace MauserC96
                 _testCreature.ragdoll.headPart.transform.position -
                 (_testCreature.transform.position + _testCreature.transform.forward)
             ), out hitInfo, 10, (1 << 27 | 1 << 0 | 1 << 13));
-
-            Debug.Log("Hit infor");
-            Debug.Log(hitInfo.point);
+            
             
             var freeindex = _testCreature.ragdoll.headPart.collisionHandler.GetFreeCollisionIndex();
             _testCreature.ragdoll.headPart.collisionHandler.collisions[freeindex].NewHit(
-                _pistolItem.colliderGroups[0].colliders[0],
+                _pistolBullet.colliderGroups[0].colliders[0],
                 hitInfo.collider,
-                _pistolItem.colliderGroups[0],
+                _pistolBullet.colliderGroups[0],
                 _testCreature.ragdoll.headPart.colliderGroup,
-                new Vector3(100, 100, 100),
+                intensity*(hitInfo.point - (_testCreature.transform.position + _testCreature.transform.forward + _testCreature.morphology.height*Vector3.up)).normalized,
                 hitInfo.point,
                 hitInfo.normal,
-                100,
+                1,
                 Catalog.GetData<MaterialData>("Blade"),
                 Catalog.GetData<MaterialData>("Flesh")
             );
