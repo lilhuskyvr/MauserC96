@@ -1,0 +1,143 @@
+{
+  "$type": "ThunderRoad.DamagerData, Assembly-CSharp",
+  "id": "AOTBulletPierce",
+  "saveFolder": "Bas",
+  "version": 0,
+  "damageModifierId": "AOTBulletDefaultPierce",
+  "velocityDamageCurve": {
+    "keys": [
+      {
+        "time": 0.0,
+        "value": 1.0,
+        "inTangent": 0.908289969,
+        "outTangent": 0.908289969,
+        "inWeight": 0.0,
+        "outWeight": 0.0599334054,
+        "weightedMode": "None",
+        "tangentMode": 0
+      },
+      {
+        "time": 20.0,
+        "value": 10.0,
+        "inTangent": 0.0228757728,
+        "outTangent": 0.0228757728,
+        "inWeight": 0.105438426,
+        "outWeight": 0.0,
+        "weightedMode": "None",
+        "tangentMode": 0
+      }
+    ],
+    "length": 2,
+    "preWrapMode": "ClampForever",
+    "postWrapMode": "ClampForever"
+  },
+  "damageMultiplier": 1.0,
+  "intensityMinVelocity": 0.0,
+  "intensityMaxVelocity": 0.0,
+  "maxVerticalAngle": 180.0,
+  "maxHorizontalAngle": 180.0,
+  "maxNormalAngle": 180.0,
+  "hitDelayByCollider": 0.1,
+  "playerDamageMultiplier": 100.0,
+  "selfDamage": false,
+  "staticVelocityDamageCurve": {
+    "keys": [
+      {
+        "time": 2.0,
+        "value": 1.0,
+        "inTangent": 0.0,
+        "outTangent": 0.0,
+        "inWeight": 0.0,
+        "outWeight": 0.0,
+        "weightedMode": "None",
+        "tangentMode": 0
+      },
+      {
+        "time": 12.0,
+        "value": 8.0,
+        "inTangent": 0.0,
+        "outTangent": 0.0,
+        "inWeight": 0.0,
+        "outWeight": 0.0,
+        "weightedMode": "None",
+        "tangentMode": 0
+      }
+    ],
+    "length": 2,
+    "preWrapMode": "ClampForever",
+    "postWrapMode": "ClampForever"
+  },
+  "throwedMultiplier": 1.7,
+  "badAngleBluntFallback": false,
+  "badAngleDamage": 1.0,
+  "badAngleRecoilMultiplier": 0.0,
+  "badAngleMaterialDamageId": null,
+  "recoilMin": 0.0,
+  "recoilMax": 1.0,
+  "dyingAnimationMaxVelocity": 16.0,
+  "knockoutMinVelocityMultiplier": 1.0,
+  "knockoutDurationMultiplier": 1.0,
+  "knockoutLevel": 0,
+  "addForce": 0.0,
+  "addForceState": "Handled",
+  "addForceTargetType": "All",
+  "addForceMode": "Impulse",
+  "addForceDuration": 0.0,
+  "addForceRagdollPartMultiplier": 1.0,
+  "addForceRagdollOtherMultiplier": 0.0,
+  "addForceSlowMoMultiplier": 1.0,
+  "addForceKnockoutOnly": false,
+  "addForceNormalize": false,
+  "penetrationAllowed": true,
+  "penetrationDeepDepthMultiplier": 1.0,
+  "penetrationDamage": 20.0,
+  "penetrationEffect": true,
+  "penetrationInitialVelocityMultiplier": 1.0,
+  "penetrationSkewerDetection": true,
+  "penetrationSkewerDamage": 20.0,
+  "penetrationHeldDamperIn": 10000.0,
+  "penetrationHeldDamperOut": 10000.0,
+  "penetrationDamper": 10000.0,
+  "penetrationShortDepth": 0.1,
+  "penetrationShortDepthAngle": 180.0,
+  "penetrationAllowSlide": false,
+  "penetrationSlideDamper": 100.0,
+  "penetrationTempModifier": "OnThrow",
+  "penetrationTempModifierDuration": 10.0,
+  "penetrationTempModifierDamperIn": 100.0,
+  "penetrationTempModifierDamperOut": 10000.0,
+  "penetrationPressureAllowed": true,
+  "penetrationPressureForceCurve": {
+    "keys": [
+      {
+        "time": 0.0,
+        "value": 2.0,
+        "inTangent": 0.0,
+        "outTangent": 0.0,
+        "inWeight": 0.0,
+        "outWeight": 0.0,
+        "weightedMode": "None",
+        "tangentMode": 0
+      },
+      {
+        "time": 2.0,
+        "value": 3.0,
+        "inTangent": 0.0,
+        "outTangent": 0.0,
+        "inWeight": 0.0,
+        "outWeight": 0.0,
+        "weightedMode": "None",
+        "tangentMode": 0
+      }
+    ],
+    "length": 2,
+    "preWrapMode": "ClampForever",
+    "postWrapMode": "ClampForever"
+  },
+  "penetrationPressureMaxDot": 0.2,
+  "dismembermentAllowed": false,
+  "dismembermentMinVelocity": 10.0,
+  "dismembermentMaxVerticalAngle": 180.0,
+  "dismembermentMaxHorizontalAngle": 180.0,
+  "dismembermentNoPenetrationDuration": 1.0
+}
