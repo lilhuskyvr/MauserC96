@@ -9,7 +9,7 @@
   "allowDecals": false,
   "type": "Weapon",
   "slot": "Medium",
-  "mass": 0.5,
+  "mass": 0.1,
   "drag": 0.5,
   "angularDrag": 0.05,
   "manaRegenMultiplier": 1.0,
@@ -67,22 +67,12 @@
   "damagers": [
     {
       "transformName": "Pierce",
-      "damagerID": "AOTBulletPierce"
+      "damagerID": "SwordPierce"
     }
   ],
   "Interactables": [],
   "effectHinges": [],
-  "whooshs": [
-    {
-      "transformName": "Whoosh",
-      "effectId": "WhooshSwordShort",
-      "trigger": "Always",
-      "stopOnSnap": true,
-      "minVelocity": 3.0,
-      "maxVelocity": 14.0,
-      "dampening": 0.1
-    }
-  ],
+  "whooshs": [],
   "localizationId": "AOTBullet",
   "displayName": "AOT Bullet",
   "description": "Dedicate your hearts",
