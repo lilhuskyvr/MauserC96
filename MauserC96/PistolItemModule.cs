@@ -7,8 +7,12 @@ namespace MauserC96
 {
     public class PistolItemModule : ItemModule
     {
-        public string bulletItemId = "AOTBullet", muzzleEffectId;
-        public float bulletSpeed = 100;
+        public string bulletItemId = "AOTBullet", bulletShellItemId = "AOTBulletShell", shootEffectId = "AOTGunShoot";
+        public float bulletSpeed = 50;
+
+        public string bulletSpawnerTransform = "BulletSpawner",
+            bulletShellSpawnerTransform = "BulletShellSpawner",
+            muzzleTransform = "Muzzle";
 
         public override void OnItemLoaded(Item item)
         {
@@ -22,19 +26,25 @@ namespace MauserC96
     {
         private Item _pistolItem;
         private Transform _bulletSpawner;
-        private Transform _shellSpawner;
+        private Transform _bulletShellSpawner;
         private Transform _muzzle;
         private bool _isShootCoroutineRunning;
         private bool _isSpawnBulletCoroutineRunning;
         private Item _bulletItem;
+        private Item _bulletShellItem;
         private PistolItemModule _pistolItemModule;
         private ItemData _bulletData;
-        private EffectData _muzzleEffectData;
+        private ItemData _bulletShellData;
+        private EffectData _shootEffectData;
+        private Animation _animation;
+        private RagdollHand _ragdollHand;
 
         private void Start()
         {
             _pistolItem = GetComponent<Item>();
             _pistolItemModule = _pistolItem.data.GetModule<PistolItemModule>();
+
+            _animation = _pistolItem.GetComponentInChildren<Animation>();
 
             LoadCustomReferences();
             RegisterEvents();
@@ -43,24 +53,32 @@ namespace MauserC96
 
         private void LoadCustomReferences()
         {
-            _bulletSpawner = _pistolItem.GetCustomReference("BulletSpawner");
-            _shellSpawner = _pistolItem.GetCustomReference("ShellSpawner");
-            _muzzle = _pistolItem.GetCustomReference("Muzzle");
+            _bulletSpawner = _pistolItem.gameObject.transform.Find(_pistolItemModule.bulletSpawnerTransform);
+            _bulletShellSpawner = _pistolItem.gameObject.transform.Find(_pistolItemModule.bulletShellSpawnerTransform);
+            _muzzle = _pistolItem.gameObject.transform.Find(_pistolItemModule.muzzleTransform);
         }
 
         private void RegisterEvents()
         {
             _pistolItem.OnHeldActionEvent += PistolItemOnOnHeldActionEvent;
+            _pistolItem.OnGrabEvent += PistolItemOnOnGrabEvent;
+        }
+
+        private void PistolItemOnOnGrabEvent(Handle handle, RagdollHand ragdollhand)
+        {
+            _ragdollHand = ragdollhand;
         }
 
         private void LoadCatalogData()
         {
             _bulletData = Catalog.GetData<ItemData>(_pistolItemModule.bulletItemId);
-            _muzzleEffectData = Catalog.GetData<EffectData>(_pistolItemModule.muzzleEffectId);
+            _bulletShellData = Catalog.GetData<ItemData>(_pistolItemModule.bulletShellItemId);
+            _shootEffectData = Catalog.GetData<EffectData>(_pistolItemModule.shootEffectId);
         }
 
         private void PistolItemOnOnHeldActionEvent(RagdollHand ragdollhand, Handle handle, Interactable.Action action)
         {
+            _ragdollHand = ragdollhand;
             if (action == Interactable.Action.UseStart)
             {
                 StartCoroutine(Shoot());
@@ -102,33 +120,17 @@ namespace MauserC96
 
         private IEnumerator HandleItem(Item item, RaycastHit hitInfo)
         {
-            var collisionIndex = item.mainCollisionHandler.GetFreeCollisionIndex();
-            if (collisionIndex != -1)
+            if (_bulletItem == null)
+                yield return SpawnBulletCoroutine();
+
+            //wait for the bullet to spawn
+            while (_bulletItem == null)
             {
-                if (_bulletItem == null)
-                    yield return SpawnBulletCoroutine();
-
-                //wait for the bullet to spawn
-                while (_bulletItem == null)
-                {
-                    yield return new WaitForFixedUpdate();
-                }
-
-                var impactVelocity = 20 * (hitInfo.point - _muzzle.position).normalized;
-                item.mainCollisionHandler.collisions[collisionIndex].NewHit(
-                    _bulletItem.colliderGroups[0].colliders[0],
-                    item.colliderGroups[0].colliders[0],
-                    _bulletItem.colliderGroups[0],
-                    item.colliderGroups[0],
-                    impactVelocity,
-                    hitInfo.point,
-                    hitInfo.normal,
-                    Mathf.InverseLerp(Catalog.gameData.collisionEnterVelocityRange.x,
-                        Catalog.gameData.collisionEnterVelocityRange.y, impactVelocity.magnitude),
-                    Catalog.GetData<MaterialData>("Blade"),
-                    Catalog.GetData<MaterialData>("Plate")
-                );
+                yield return new WaitForFixedUpdate();
             }
+
+            var impactVelocity = 20 * (hitInfo.point - _muzzle.position).normalized;
+            item.rb.AddForce(impactVelocity, ForceMode.Impulse);
 
             yield return null;
         }
@@ -144,38 +146,34 @@ namespace MauserC96
             {
                 _isShootCoroutineRunning = true;
 
-                var hitInfo = new RaycastHit();
-                Physics.Raycast(new Ray(_muzzle.transform.position,
-                        _muzzle.forward
-                    ), out hitInfo, 50,
-                    (1 << 27 | 1 << 0 | 1 << 10 | 1 << 9 | 1 << 13)
-                );
+                if (_bulletItem == null || _bulletShellItem == null)
+                    yield return SpawnBulletCoroutine();
 
-                Debug.Log("layer");
-                Debug.Log(hitInfo.transform.gameObject.layer);
-                if (hitInfo.rigidbody != null)
-                {
-                    Debug.Log("Has Rigidbody");
-                    var ragdollPart = hitInfo.rigidbody.GetComponentInParent<RagdollPart>();
+                var effect = _shootEffectData.Spawn(_muzzle.position, _muzzle.rotation);
+                effect.Play();
 
-                    if (ragdollPart != null)
-                    {
-                        Debug.Log("Handle ragdoll part");
-                        yield return HandleRagdollPart(ragdollPart, hitInfo);
-                    }
-                    else
-                    {
-                        var item = hitInfo.rigidbody.GetComponentInParent<Item>();
+                _animation.Play("Shoot");
+                if (_ragdollHand != null)
+                    PlayerControl.GetHand(_ragdollHand.side).HapticPlayClip(Catalog.gameData.haptics.hit);
 
-                        if (item != null)
-                        {
-                            Debug.Log("handle item");
-                            yield return HandleItem(item, hitInfo);
-                        }
-                    }
-                }
+                //shoot bullet
+                _bulletItem.transform.SetParent(null, true);
+                _bulletItem.rb.isKinematic = false;
+                _bulletItem.SetColliderAndMeshLayer(GameManager.GetLayer(LayerName.MovingObject));
+                _bulletItem.rb.detectCollisions = true;
+                _bulletItem.rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+                _bulletItem.rb.AddForce(_pistolItemModule.bulletSpeed * _bulletItem.flyDirRef.forward,
+                    ForceMode.Impulse);
+                _bulletItem.isThrowed = true;
+                _bulletItem.isFlying = true;
+
+                //eject shell
+                _bulletShellItem.transform.SetParent(null, true);
+                _bulletShellItem.rb.isKinematic = false;
+                _bulletShellItem.rb.AddForce(0.3f * Vector3.up, ForceMode.Impulse);
 
                 _bulletItem = null;
+                _bulletShellItem = null;
                 _isShootCoroutineRunning = false;
                 yield return null;
             }
@@ -196,11 +194,31 @@ namespace MauserC96
                     resultItem.IgnoreObjectCollision(_pistolItem);
                     resultItem.transform.position = _bulletSpawner.transform.position;
                     resultItem.transform.rotation = _bulletSpawner.transform.rotation;
-                    resultItem.rb.AddForce(0.5f*Vector3.up, ForceMode.Impulse);
+                    resultItem.transform.SetParent(_pistolItem.transform, true);
+                    resultItem.rb.isKinematic = true;
+                    resultItem.disallowDespawn = true;
+                    resultItem.rb.detectCollisions = false;
+
+                    //invisible
+                    resultItem.Hide(true);
+
                     _bulletItem = resultItem;
                 });
 
-                while (_bulletItem == null)
+                _bulletShellData.SpawnAsync(resultItem =>
+                {
+                    resultItem.IgnoreObjectCollision(_pistolItem);
+                    resultItem.transform.position = _bulletShellSpawner.transform.position;
+                    resultItem.transform.rotation = _bulletShellSpawner.transform.rotation;
+                    resultItem.transform.SetParent(_pistolItem.transform, true);
+                    resultItem.rb.isKinematic = true;
+                    resultItem.disallowDespawn = true;
+                    resultItem.rb.detectCollisions = false;
+
+                    _bulletShellItem = resultItem;
+                });
+
+                while (_bulletItem == null || _bulletShellItem == null)
                 {
                     yield return new WaitForFixedUpdate();
                 }

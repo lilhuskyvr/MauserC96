@@ -1,0 +1,10 @@
+{
+    "categories": [
+    {
+     "name": "AOT",
+      "iconAddress": "AOTCategory",
+      "iconPath": "AOTCategory",
+      "effectId": null
+    }
+  ] 
+}

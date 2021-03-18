@@ -9,7 +9,7 @@
   "allowDecals": false,
   "type": "Weapon",
   "slot": "Medium",
-  "mass": 0.1,
+  "mass": 1.0,
   "drag": 0.5,
   "angularDrag": 0.05,
   "manaRegenMultiplier": 1.0,
@@ -67,7 +67,7 @@
   "damagers": [
     {
       "transformName": "Pierce",
-      "damagerID": "SwordPierce"
+      "damagerID": "AOTBulletPierce"
     }
   ],
   "Interactables": [],

@@ -1,15 +1,15 @@
 {
   "$type": "ThunderRoad.ItemData, Assembly-CSharp",
-  "id": "AOTPistol",
+  "id": "AOTBulletShell",
   "saveFolder": "Bas",
   "version": 4,
-  "prefabAddress": "AOTPistol",
+  "prefabAddress": "AOTBulletShell",
   "pooledCount": 0,
   "androidPooledCount": 0,
   "allowDecals": false,
   "type": "Weapon",
   "slot": "Medium",
-  "mass": 1.16,
+  "mass": 1.0,
   "drag": 0.5,
   "angularDrag": 0.05,
   "manaRegenMultiplier": 1.0,
@@ -61,55 +61,19 @@
       "defenseHasPriority": false,
       "attackIgnore": false,
       "attackForceParryIgnoreRotation": false
-    },
-    {
-      "$type": "MauserC96.PistolItemModule, MauserC96",
-      "bulletItemId": "AOTBullet",
-      "bulletShellItemId": "AOTBulletShell",
-      "shootEffectId": "AOTGunShoot",
-      "bulletSpawnerTransform": "BulletSpawner",
-      "bulletShellSpawnerTransform": "BulletShellSpawner",
-      "muzzleTransform": "Muzzle"
     }
   ],
-  "colliderGroups": [
-    {
-      "transformName": "Blunts",
-      "colliderGroupId": "BladeMace"
-    }
-  ],
-  "damagers": [
-    {
-      "transformName": "Blunt",
-      "damagerID": "Handle1H"
-    }
-  ],
-  "Interactables": [
-    {
-      "transformName": "Handle",
-      "interactableId": "ObjectHandleLight",
-      "overrideHandPose": true,
-      "handPoseId": "HandleCork"
-    }
-  ],
+  "colliderGroups": [],
+  "damagers": [],
+  "Interactables": [],
   "effectHinges": [],
-  "whooshs": [
-    {
-      "transformName": "Whoosh",
-      "effectId": "WhooshSwordShort",
-      "trigger": "Always",
-      "stopOnSnap": true,
-      "minVelocity": 3.0,
-      "maxVelocity": 14.0,
-      "dampening": 0.1
-    }
-  ],
-  "localizationId": "AOTPistol",
-  "displayName": "AOT Pistol",
+  "whooshs": [],
+  "localizationId": "AOTBullet",
+  "displayName": "AOT Bullet",
   "description": "Dedicate your hearts",
   "author": "lilhusky",
   "price": 0.0,
-  "purchasable": true,
+  "purchasable": false,
   "tier": 2,
   "levelRequired": 0,
   "isStackable": false,
