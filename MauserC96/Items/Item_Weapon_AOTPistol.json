@@ -65,8 +65,10 @@
     {
       "$type": "MauserC96.PistolItemModule, MauserC96",
       "bulletItemId": "AOTBullet",
+      "hasBulletShell": true,
       "bulletShellItemId": "AOTBulletShell",
       "shootEffectId": "AOTGunShoot",
+      "shootAnimation": "Shoot",
       "bulletSpawnerTransform": "BulletSpawner",
       "bulletShellSpawnerTransform": "BulletShellSpawner",
       "muzzleTransform": "Muzzle"
@@ -89,7 +91,7 @@
       "transformName": "Handle",
       "interactableId": "ObjectHandleLight",
       "overrideHandPose": true,
-      "handPoseId": "HandleCork"
+      "handPoseId": "HandleLarge"
     }
   ],
   "effectHinges": [],

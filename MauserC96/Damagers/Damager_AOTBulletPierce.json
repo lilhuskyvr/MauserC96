@@ -31,14 +31,14 @@
     "preWrapMode": "ClampForever",
     "postWrapMode": "ClampForever"
   },
-  "damageMultiplier": 1.0,
+  "damageMultiplier": 100.0,
   "intensityMinVelocity": 0.0,
   "intensityMaxVelocity": 0.0,
   "maxVerticalAngle": 180.0,
   "maxHorizontalAngle": 180.0,
   "maxNormalAngle": 180.0,
   "hitDelayByCollider": 0.1,
-  "playerDamageMultiplier": 100.0,
+  "playerDamageMultiplier": 1.0,
   "selfDamage": false,
   "staticVelocityDamageCurve": {
     "keys": [

@@ -63,7 +63,12 @@
       "attackForceParryIgnoreRotation": false
     }
   ],
-  "colliderGroups": [],
+  "colliderGroups": [
+    {
+      "transformName": "Bullets",
+      "colliderGroupId": "BladeSword"
+    }
+  ],
   "damagers": [
     {
       "transformName": "Pierce",

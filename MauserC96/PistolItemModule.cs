@@ -7,8 +7,13 @@ namespace MauserC96
 {
     public class PistolItemModule : ItemModule
     {
-        public string bulletItemId = "AOTBullet", bulletShellItemId = "AOTBulletShell", shootEffectId = "AOTGunShoot";
+        public string bulletItemId = "AOTBullet",
+            bulletShellItemId = "AOTBulletShell",
+            shootEffectId = "AOTGunShoot",
+            shootAnimation = "Shoot";
+
         public float bulletSpeed = 50;
+        public bool hasBulletShell = false;
 
         public string bulletSpawnerTransform = "BulletSpawner",
             bulletShellSpawnerTransform = "BulletShellSpawner",
@@ -46,15 +51,20 @@ namespace MauserC96
 
             _animation = _pistolItem.GetComponentInChildren<Animation>();
 
-            LoadCustomReferences();
+            LoadCustomTransforms();
             RegisterEvents();
             LoadCatalogData();
         }
 
-        private void LoadCustomReferences()
+        private void LoadCustomTransforms()
         {
             _bulletSpawner = _pistolItem.gameObject.transform.Find(_pistolItemModule.bulletSpawnerTransform);
-            _bulletShellSpawner = _pistolItem.gameObject.transform.Find(_pistolItemModule.bulletShellSpawnerTransform);
+            if (_pistolItemModule.hasBulletShell)
+            {
+                _bulletShellSpawner =
+                    _pistolItem.gameObject.transform.Find(_pistolItemModule.bulletShellSpawnerTransform);
+            }
+
             _muzzle = _pistolItem.gameObject.transform.Find(_pistolItemModule.muzzleTransform);
         }
 
@@ -85,39 +95,6 @@ namespace MauserC96
             }
         }
 
-        private IEnumerator HandleRagdollPart(RagdollPart ragdollPart, RaycastHit hitInfo)
-        {
-            var collisionIndex = ragdollPart.collisionHandler.GetFreeCollisionIndex();
-            if (collisionIndex != -1)
-            {
-                if (_bulletItem == null)
-                    yield return SpawnBulletCoroutine();
-
-                //wait for the bullet to spawn
-                while (_bulletItem == null)
-                {
-                    yield return new WaitForFixedUpdate();
-                }
-
-                var impactVelocity = 20 * (hitInfo.point - _muzzle.position).normalized;
-                ragdollPart.collisionHandler.collisions[collisionIndex].NewHit(
-                    _bulletItem.colliderGroups[0].colliders[0],
-                    ragdollPart.colliderGroup.colliders[0],
-                    _bulletItem.colliderGroups[0],
-                    ragdollPart.colliderGroup,
-                    impactVelocity,
-                    hitInfo.point,
-                    hitInfo.normal,
-                    Mathf.InverseLerp(Catalog.gameData.collisionEnterVelocityRange.x,
-                        Catalog.gameData.collisionEnterVelocityRange.y, impactVelocity.magnitude),
-                    Catalog.GetData<MaterialData>("Blade"),
-                    Catalog.GetData<MaterialData>("Flesh")
-                );
-            }
-
-            yield return null;
-        }
-
         private IEnumerator HandleItem(Item item, RaycastHit hitInfo)
         {
             if (_bulletItem == null)
@@ -146,13 +123,13 @@ namespace MauserC96
             {
                 _isShootCoroutineRunning = true;
 
-                if (_bulletItem == null || _bulletShellItem == null)
+                if (_bulletItem == null || _pistolItemModule.hasBulletShell && _bulletShellItem == null)
                     yield return SpawnBulletCoroutine();
 
                 var effect = _shootEffectData.Spawn(_muzzle.position, _muzzle.rotation);
                 effect.Play();
 
-                _animation.Play("Shoot");
+                _animation.Play(_pistolItemModule.shootAnimation);
                 if (_ragdollHand != null)
                     PlayerControl.GetHand(_ragdollHand.side).HapticPlayClip(Catalog.gameData.haptics.hit);
 
@@ -162,6 +139,15 @@ namespace MauserC96
                 _bulletItem.SetColliderAndMeshLayer(GameManager.GetLayer(LayerName.MovingObject));
                 _bulletItem.rb.detectCollisions = true;
                 _bulletItem.rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+                _bulletItem.disallowDespawn = false;
+                try
+                {
+                    _bulletItem.imbues[0].Transfer(_pistolItem.imbues[0].spellCastBase, _pistolItem.imbues[0].energy);
+                }
+                catch (Exception exception)
+                {
+                    //ignored
+                }
                 _bulletItem.rb.AddForce(_pistolItemModule.bulletSpeed * _bulletItem.flyDirRef.forward,
                     ForceMode.Impulse);
                 _bulletItem.isThrowed = true;
@@ -170,7 +156,8 @@ namespace MauserC96
                 //eject shell
                 _bulletShellItem.transform.SetParent(null, true);
                 _bulletShellItem.rb.isKinematic = false;
-                _bulletShellItem.rb.AddForce(0.3f * Vector3.up, ForceMode.Impulse);
+                _bulletShellItem.rb.AddForce(5f * _bulletShellSpawner.up, ForceMode.Impulse);
+                _bulletShellItem.disallowDespawn = false;
 
                 _bulletItem = null;
                 _bulletShellItem = null;
@@ -205,20 +192,23 @@ namespace MauserC96
                     _bulletItem = resultItem;
                 });
 
-                _bulletShellData.SpawnAsync(resultItem =>
+                if (_pistolItemModule.hasBulletShell)
                 {
-                    resultItem.IgnoreObjectCollision(_pistolItem);
-                    resultItem.transform.position = _bulletShellSpawner.transform.position;
-                    resultItem.transform.rotation = _bulletShellSpawner.transform.rotation;
-                    resultItem.transform.SetParent(_pistolItem.transform, true);
-                    resultItem.rb.isKinematic = true;
-                    resultItem.disallowDespawn = true;
-                    resultItem.rb.detectCollisions = false;
+                    _bulletShellData.SpawnAsync(resultItem =>
+                    {
+                        resultItem.IgnoreObjectCollision(_pistolItem);
+                        resultItem.transform.position = _bulletShellSpawner.transform.position;
+                        resultItem.transform.rotation = _bulletShellSpawner.transform.rotation;
+                        resultItem.transform.SetParent(_pistolItem.transform, true);
+                        resultItem.rb.isKinematic = true;
+                        resultItem.disallowDespawn = true;
+                        resultItem.rb.detectCollisions = false;
 
-                    _bulletShellItem = resultItem;
-                });
+                        _bulletShellItem = resultItem;
+                    });
+                }
 
-                while (_bulletItem == null || _bulletShellItem == null)
+                while (_bulletItem == null || _pistolItemModule.hasBulletShell && _bulletShellItem == null)
                 {
                     yield return new WaitForFixedUpdate();
                 }
