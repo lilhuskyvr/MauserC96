@@ -4,11 +4,6 @@ D:\Steam\steamapps\common\Blade & Sorcery\BladeAndSorcery_Data\StreamingAssets\M
 C:\Users\nikon\RiderProjects\MauserC96\MauserC96\obj\Release\MauserC96.dll
 C:\Users\nikon\RiderProjects\MauserC96\MauserC96\obj\Release\MauserC96.pdb
 D:\Steam\steamapps\common\Blade & Sorcery\BladeAndSorcery_Data\StreamingAssets\Mods\AOTPistol\Items\Item_Weapon_AOTPistol.json
-D:\Steam\steamapps\common\Blade & Sorcery\BladeAndSorcery_Data\StreamingAssets\Mods\AOTPistol\Items\Item_Weapon_AOTBullet.json
 D:\Steam\steamapps\common\Blade & Sorcery\BladeAndSorcery_Data\StreamingAssets\Mods\AOTPistol\Level_PistolTesting.json
 D:\Steam\steamapps\common\Blade & Sorcery\BladeAndSorcery_Data\StreamingAssets\Mods\AOTPistol\manifest.json
-D:\Steam\steamapps\common\Blade & Sorcery\BladeAndSorcery_Data\StreamingAssets\Mods\AOTPistol\DamageModifiers\DamageModifier_AOTBulletDefaultPierce.json
-D:\Steam\steamapps\common\Blade & Sorcery\BladeAndSorcery_Data\StreamingAssets\Mods\AOTPistol\Damagers\Damager_AOTBulletPierce.json
-D:\Steam\steamapps\common\Blade & Sorcery\BladeAndSorcery_Data\StreamingAssets\Mods\AOTPistol\Effects\Effect_AOTGunShoot.json
-D:\Steam\steamapps\common\Blade & Sorcery\BladeAndSorcery_Data\StreamingAssets\Mods\AOTPistol\Items\Item_Weapon_AOTBulletShell.json
 D:\Steam\steamapps\common\Blade & Sorcery\BladeAndSorcery_Data\StreamingAssets\Mods\AOTPistol\Game.json

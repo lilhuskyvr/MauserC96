@@ -47,6 +47,9 @@
     <Reference Include="UnityEngine.AnimationModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>D:\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.AudioModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>D:\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>D:\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
@@ -55,33 +58,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Pistol.cs" />
+    <Compile Include="PistolData.cs" />
     <Compile Include="PistolTestingLevelModule.cs" />
     <Compile Include="PistolItemModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="aotpistol_assets_all.bundle" />
-    <Content Include="catalog_2021.03.19.08.58.33.hash" />
-    <Content Include="catalog_2021.03.19.08.58.33.json" />
-    <Content Include="DamageModifiers\DamageModifier_AOTBulletDefaultPierce.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Damagers\Damager_AOTBulletPierce.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Effects\Effect_AOTGunShoot.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Game.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Items\Item_Weapon_AOTBulletShell.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Items\Item_Weapon_AOTPistol.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Items\Item_Weapon_AOTBullet.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Level_PistolTesting.json">
