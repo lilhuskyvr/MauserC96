@@ -91,7 +91,7 @@ namespace MauserC96
 
         public void Fire()
         {
-            GameManager.local.StartCoroutine(_pistolItem.gameObject.GetComponent<Pistol>().Shoot());
+            _pistolItem.gameObject.GetComponent<Pistol>().Shoot();
         }
 
         public void NavigateFire()
