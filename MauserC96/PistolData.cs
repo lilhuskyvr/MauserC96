@@ -21,16 +21,25 @@ namespace MauserC96
         [SerializeField] [Tooltip("The force of the bullet to push the ragdollPart")]
         public float force = 300;
 
-        
+
         [SerializeField] [Tooltip("Animation will be added here")]
         public Transform pistol3DObject;
-        
+
         [SerializeField] public AnimationClip shootAnimationClip;
+
+        [SerializeField] public ParticleSystem muzzleFlash;
+        [SerializeField] public Transform muzzle;
+        [SerializeField] public Transform bullet;
 
         private void Awake()
         {
             if (shootAnimationClip != null)
                 shootAnimationClip.legacy = true;
+            if (bullet != null)
+            {
+                bullet.parent = null;
+                bullet.gameObject.SetActive(false);
+            }
         }
     }
 }

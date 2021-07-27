@@ -1,9 +1,12 @@
 {
-  "$type": "ThunderRoad.ItemData, Assembly-CSharp",
+  "$type": "MauserC96.PistolItemData, MauserC96",
   "id": "AOTPistol",
   "saveFolder": "Bas",
   "version": 4,
   "prefabAddress": "AOTPistol",
+  "damage": 51,
+  "range": 101,
+  "force": 301,
   "pooledCount": 0,
   "androidPooledCount": 0,
   "allowDecals": false,
@@ -64,14 +67,10 @@
     },
     {
       "$type": "MauserC96.PistolItemModule, MauserC96",
-      "bulletItemId": "AOTBullet",
-      "hasBulletShell": true,
-      "bulletShellItemId": "AOTBulletShell",
-      "shootEffectId": "AOTGunShoot",
-      "shootAnimation": "Shoot",
-      "bulletSpawnerTransform": "BulletSpawner",
-      "bulletShellSpawnerTransform": "BulletShellSpawner",
-      "muzzleTransform": "Muzzle"
+      "overridePistolData": true,
+      "range": 100,
+      "damage": 50,
+      "force": 300
     }
   ],
   "colliderGroups": [

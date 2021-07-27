@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using RainyReignGames.RevealMask;
 using ThunderRoad;
@@ -17,13 +18,20 @@ namespace MauserC96
         public EffectData bloodHitData = Catalog.GetData<EffectData>("HitRagdollOnFlesh");
         public int moduleIndex = 3;
         public PistolData pistolData;
+        public PistolItemModule pistolItemModule;
 
         private void Start()
         {
             _pistolItem = GetComponent<Item>();
-
+            pistolItemModule = _pistolItem.data.GetModule<PistolItemModule>();
             RegisterEvents();
             pistolData = GetComponent<PistolData>();
+            if (pistolItemModule.overridePistolData)
+            {
+                pistolData.damage = pistolItemModule.damage;
+                pistolData.range = pistolItemModule.range;
+                pistolData.force = pistolItemModule.force;
+            }
             _animation = pistolData.pistol3DObject.gameObject.AddComponent<Animation>();
             _animation.AddClip(pistolData.shootAnimationClip, "Shoot");
             _audioSource = gameObject.AddComponent<AudioSource>();
@@ -50,6 +58,45 @@ namespace MauserC96
             }
         }
 
+        public IEnumerator PlayGunSound()
+        {
+            _audioSource.Play();
+            yield return null;
+        }
+
+        public IEnumerator PlayMuzzleEffect()
+        {
+            pistolData.muzzleFlash.Play();
+            yield return null;
+        }
+
+        public IEnumerator PlayShootAnimation()
+        {
+            _animation.Play("Shoot");
+            yield return null;
+        }
+
+        public IEnumerator SimulateProjectile(Vector3 target)
+        {
+            if (pistolData.bullet == null)
+                yield break;
+            Debug.Log("simulate projectile");
+            pistolData.bullet.gameObject.SetActive(true);
+            pistolData.bullet.position = pistolData.muzzle.position;
+            pistolData.bullet.rotation = pistolData.muzzle.rotation;
+            Debug.Log("simulate projectile 2");
+            Debug.Log(Vector3.Distance(pistolData.bullet.position, target));
+            while (Vector3.Distance(pistolData.bullet.position, target) >= 0.1f)
+            {
+                pistolData.bullet.position = Vector3.MoveTowards(pistolData.bullet.position, target, 100f*Time.deltaTime);
+                Debug.Log(pistolData.bullet.position);
+                yield return new WaitForFixedUpdate();
+            }
+
+            pistolData.bullet.gameObject.SetActive(false);
+            yield return null;
+        }
+
         public void Shoot()
         {
             StartCoroutine(ShootCoroutine());
@@ -65,9 +112,11 @@ namespace MauserC96
 
             _isShootCoroutineRunning = true;
 
-            _audioSource.Play();
+            StartCoroutine(PlayMuzzleEffect());
 
-            _animation.Play("Shoot");
+            StartCoroutine(PlayGunSound());
+
+            StartCoroutine(PlayShootAnimation());
 
             if (_ragdollHand != null)
                 PlayerControl.GetHand(_ragdollHand.side).HapticPlayClip(Catalog.gameData.haptics.hit);
@@ -89,6 +138,8 @@ namespace MauserC96
                 yield break;
             }
 
+            StartCoroutine(SimulateProjectile(raycastHit.point));
+
             var ragdollPart = raycastHit.rigidbody.GetComponentInParent<RagdollPart>();
 
             if (ragdollPart == null)
@@ -96,6 +147,8 @@ namespace MauserC96
                 _isShootCoroutineRunning = false;
                 yield break;
             }
+
+            SpawnBulletHole(raycastHit, ragdollPart);
 
             if (ragdollPart.ragdoll.creature.state != Creature.State.Dead)
             {
@@ -105,9 +158,6 @@ namespace MauserC96
             }
 
             ragdollPart.rb.AddForce(pistolData.force * ray.direction, ForceMode.Impulse);
-
-            SpawnBulletHole(raycastHit, ragdollPart);
-
 
             _isShootCoroutineRunning = false;
             yield return null;
@@ -154,13 +204,18 @@ namespace MauserC96
                 revealMaterialControllers,
                 effectModuleReveal.revealData, null));
 
+            TriggerRealisticBleed(ragdollPart, raycastHit.collider, reveal.transform);
+        }
+
+        public void TriggerRealisticBleed(RagdollPart ragdollPart, Collider collider, Transform location)
+        {
             EffectInstance effectInstance = new EffectInstance();
             var collisionInstance = new CollisionInstance();
             collisionInstance.damageStruct.hitRagdollPart = ragdollPart;
             collisionInstance.pressureRelativeVelocity = Vector3.one;
             collisionInstance.damageStruct.damageType = DamageType.Pierce;
-            collisionInstance.targetCollider = raycastHit.collider;
-            effectInstance.AddEffect(data, reveal.transform.position, reveal.transform.rotation, reveal.transform,
+            collisionInstance.targetCollider = collider;
+            effectInstance.AddEffect(data, location.position, location.rotation, location,
                 collisionInstance);
         }
     }
